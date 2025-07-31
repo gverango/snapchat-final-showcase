@@ -11,12 +11,19 @@ import {
 } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import BottomDrawer from "../components/BottomDrawer";
+
 
 import * as Location from "expo-location";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
+import PartyButton from "../components/PartyButton";
 
 export default function MapScreen({ navigation }) {
+  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+  const [events, setEvents] = useState([]); //eventually loaded with dummy data or API fetch
+
+
   const tabBarHeight = useBottomTabBarHeight();
   const insets = useSafeAreaInsets();
   const [location, setLocation] = useState(null);
@@ -62,6 +69,13 @@ export default function MapScreen({ navigation }) {
 
       <View style={[styles.mapFooter]}>
         <View style={styles.locationContainer}>
+          <PartyButton onPress={() => setIsDrawerVisible(true)} />
+          <BottomDrawer
+            isVisible={isDrawerVisible}
+            onClose={() => setIsDrawerVisible(false)}
+            events={events}
+          />
+{/* 
           <TouchableOpacity
             style={[styles.userLocation, styles.shadow]}
             onPress={() => {
@@ -104,9 +118,11 @@ export default function MapScreen({ navigation }) {
             <View style={styles.bitmojiTextContainer}>
               <Text style={styles.bitmojiText}>Friends</Text>
             </View>
-          </View>
+          </View> */}
+
         </View>
       </View>
+
     </View>
   );
 }
