@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import MapView, { Marker } from "react-native-maps";
 import {
   StyleSheet,
@@ -20,9 +20,12 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import PartyButton from "../components/PartyButton";
 
 export default function MapScreen({ navigation }) {
-  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-  const [events, setEvents] = useState([]); //eventually loaded with dummy data or API fetch
-
+  const [visible, setVisible] = useState(false);
+  const [entries, setEntries] = useState([
+    { id: 1, title: "Seeds For Hope Food Pantry", description: "Non-Profit" },
+    { id: 2, title: "Santa Monica Food Bank", description: "Non-Profit" },
+    { id: 3, title: "St Mark Food Pantry", description: "Soup Kitchen" },
+  ]);
 
   const tabBarHeight = useBottomTabBarHeight();
   const insets = useSafeAreaInsets();
@@ -69,57 +72,12 @@ export default function MapScreen({ navigation }) {
 
       <View style={[styles.mapFooter]}>
         <View style={styles.locationContainer}>
-          <PartyButton onPress={() => setIsDrawerVisible(true)} />
+          <PartyButton onPress={() => setVisible(true)} />
           <BottomDrawer
-            isVisible={isDrawerVisible}
-            onClose={() => setIsDrawerVisible(false)}
-            events={events}
+            entries={entries}
+            isVisible={visible}
+            onClose={() => setVisible(false)}
           />
-{/* 
-          <TouchableOpacity
-            style={[styles.userLocation, styles.shadow]}
-            onPress={() => {
-              console.log("Go to user location!");
-              const { latitude, longitude } = location.coords;
-              setCurrentRegion({ ...currentRegion, latitude, longitude });
-            }}
-          >
-            <Ionicons name="navigate" size={15} color="black" />
-          </TouchableOpacity>
-        </View>
-        <View style={[styles.bitmojiContainer, styles.shadow]}>
-          <Pressable
-            onPress={() => {
-              navigation.navigate("Event");
-            }}
-          >
-            <View style={styles.myBitmoji}>
-              <Ionicons name="calendar-outline" size={50} color="gray" />
-              <View style={styles.bitmojiTextContainer}>
-                <Text style={styles.bitmojiText}>Events</Text>
-              </View>
-            </View>
-          </Pressable>
-
-          <View style={styles.places}>
-            <Image
-              style={styles.bitmojiImage}
-              source={require("../../assets/snapchat/personalBitmoji.png")}
-            />
-            <View style={styles.bitmojiTextContainer}>
-              <Text style={styles.bitmojiText}>Places</Text>
-            </View>
-          </View>
-          <View style={styles.myFriends}>
-            <Image
-              style={styles.bitmojiImage}
-              source={require("../../assets/snapchat/personalBitmoji.png")}
-            />
-            <View style={styles.bitmojiTextContainer}>
-              <Text style={styles.bitmojiText}>Friends</Text>
-            </View>
-          </View> */}
-
         </View>
       </View>
 

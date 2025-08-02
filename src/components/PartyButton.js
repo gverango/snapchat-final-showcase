@@ -10,7 +10,6 @@ TouchableOpacity,
 
 } from "react-native";
 import { colors } from "../../assets/themes/colors";
-import MapScreen from "../screens/MapScreen";
 
 export default function PartyButton({ onPress }) {
   return (
