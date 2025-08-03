@@ -15,7 +15,7 @@ export default function PantryCard({ pantry }) {
 const styles = StyleSheet.create({
   card: {
     padding: 16,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: 'rgba(240, 240, 240, 1) ',
     borderRadius: 8,
     marginBottom: 12,
   },
