@@ -10,12 +10,12 @@ import {
   Image,
   Pressable,
 } from "react-native";
+import PantryCard from "./PantryCard";
 import PantryDetailCard from "./PantryDetailCard";
 const { height } = Dimensions.get("window");
 
-export default function BottomDrawer({ isVisible, onClose, entries }) {
+export default function BottomDrawer({ isVisible, onClose, entries, selectedPantry, setSelectedPantry }) {
   const translateY = useRef(new Animated.Value(height)).current;
-  const [selectedPantry, setSelectedPantry] = useState(null);
 
   const handleCardPress = (item) => {
     setSelectedPantry(item);
@@ -31,40 +31,39 @@ export default function BottomDrawer({ isVisible, onClose, entries }) {
 
   return (
     <>
-    <TouchableWithoutFeedback onPress={onClose}>
-      <View style={StyleSheet.absoluteFillObject}>
-        <Animated.View
-          style={[
-            styles.drawer,
-            {
-              transform: [{ translateY }],
-            },
-          ]}
-        >
-          <View style={styles.headerContainer}>
-            <Image
-              style={styles.entriesImage}
-              source={{
-                uri: "https://media.istockphoto.com/id/2150313780/vector/food-donation-outline-icon-box-with-food.jpg?s=612x612&w=0&k=20&c=wGzHLux3IWsArmzBQod9Jw9VAZklhofs_b4JlI8THDU=",
-              }}
-            />
-            <View style={styles.textContainer}>
-              <Text style={styles.header}>Find Food Assistance</Text>
-              <Text style={styles.subheader}>Powered by Pantry Path</Text>
-            </View>
-            {/* <Pressable onPress={onClose} style={styles.closeButton}>
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={StyleSheet.absoluteFillObject}>
+          <Animated.View
+            style={[
+              styles.drawer,
+              {
+                transform: [{ translateY }],
+              },
+            ]}
+          >
+            <View style={styles.headerContainer}>
+              <Image
+                style={styles.entriesImage}
+                source={{
+                  uri: "https://media.istockphoto.com/id/2150313780/vector/food-donation-outline-icon-box-with-food.jpg?s=612x612&w=0&k=20&c=wGzHLux3IWsArmzBQod9Jw9VAZklhofs_b4JlI8THDU=",
+                }}
+              />
+              <View style={styles.textContainer}>
+                <Text style={styles.header}>Find Food Assistance</Text>
+                <Text style={styles.subheader}>Powered by Pantry Path</Text>
+              </View>
+              {/* <Pressable onPress={onClose} style={styles.closeButton}>
               <Text style={styles.closeButtonText}>x</Text>
             </Pressable> */}
-          </View>
-          <FlatList
+            </View>
+            <FlatList
               data={entries}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <Pressable onPress={() => handleCardPress(item)}>
-                  <View style={styles.card}>
-                    <Text style={styles.title}>{item.title}</Text>
-                    <Text style={styles.description}>{item.description}</Text>
-                  </View>
+                  <PantryCard
+                    pantry={item}
+                  />
                 </Pressable>
               )}
             />
