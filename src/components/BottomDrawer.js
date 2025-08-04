@@ -137,7 +137,7 @@ export default function BottomDrawer({
         </View>
       </TouchableWithoutFeedback>
 
-      {/* Pantry Detail Modal */}
+      {/* Pantry Detail Card - Modal for now */}
       <PantryDetailCard
         visible={!!selectedPantry}
         pantry={selectedPantry}
