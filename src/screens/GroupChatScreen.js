@@ -1,10 +1,5 @@
-// import { React, useState, useEffect, useCallback } from "react";
 import React, { useState, useEffect, useRef } from "react";
-
-import { StatusBar } from "expo-status-bar";
 import { View, Text, FlatList, TextInput, Button, StyleSheet, Platform, SafeAreaView } from "react-native";
-import { supabase } from "../utils/hooks/supabase";
-import { GiftedChat } from "react-native-gifted-chat";
 import { useAuthentication } from "../utils/hooks/useAuthentication";
 import { useRealtimeChat } from "../hooks/use-realtime-chat";
 import { useChatScroll } from "../hooks/use-chat-scroll";
