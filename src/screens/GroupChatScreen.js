@@ -22,7 +22,6 @@ export default function GroupChatScreen({ route, navigation }) {
 
   const [input, setInput] = useState('');
   const previousMessagesRef = useRef([]);
-  const initialLoadDone = useRef(false);
 
   const { containerRef, scrollToBottom } = useChatScroll();
 
@@ -34,11 +33,6 @@ export default function GroupChatScreen({ route, navigation }) {
   };
 
   useEffect(() => {
-    // if (!initialLoadDone.current) {
-    //   initialLoadDone.current = true;
-    //   previousMessagesRef.current = messages;
-    //   return;
-    // }
 
     const previousMessages = previousMessagesRef.current;
 
@@ -77,7 +71,7 @@ export default function GroupChatScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>myAI Chat</Text>
+      <Text style={styles.header}>myAI!</Text>
       <FlatList
         ref={containerRef}
         data={messages}
