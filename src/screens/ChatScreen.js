@@ -94,8 +94,24 @@ export default function ChatScreen({ navigation }) {
                 color="lightgrey"
               />
             </TouchableOpacity>
+            
           );
         })}
+        <TouchableOpacity
+          style={[styles.userButton, {  }]}
+          onPress={() => navigation.navigate("GroupChat")}
+          key="group-chat"
+        >
+          <Ionicons
+            style={styles.userIcon}
+            name="people-outline"
+            size={36}
+            color="lightgrey"
+          />
+          <Text style={[styles.userName, { color: "black" }]}>
+            myAI Chat
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
