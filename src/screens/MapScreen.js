@@ -43,7 +43,7 @@ export default function MapScreen({ navigation }) {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
-        return;
+        return errorMsg;
       }
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
@@ -64,7 +64,7 @@ export default function MapScreen({ navigation }) {
 
   const flyToPantry = (pantry) => {
     if (!pantry) return;
-    const lat = parseFloat(pantry.latitude);
+    const lat = parseFloat(pantry.latitude); 
     const lng = parseFloat(pantry.longitude);
     if (
       mapRef.current &&

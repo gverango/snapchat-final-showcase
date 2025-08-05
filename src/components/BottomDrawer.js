@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -30,28 +30,20 @@ export default function BottomDrawer({
   // --- State ---
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // --- Memoized Categories ---
-  const uniqueCategories = useMemo(() => {
-    const categorySet = new Set();
-    entries.forEach(item => {
-      for (let i = 0; i <= 6; i++) {
-        const category = item[`categories/${i}`];
-        if (category && category.trim() !== "") {
-          categorySet.add(category);
-        }
-      }
-    });
-    return Array.from(categorySet);
-  }, [entries]);
+  // --- Categories ---
+const categorySet = new Set();
+entries.forEach(item => {
+  for (let i = 0; i <= 6; i++) { // To be changed when we refine supabase rows
+    const category = item[`categories/${i}`];
+    if (category !== "") {
+      categorySet.add(category);
+    }
+  }
+});
+const uniqueCategories = Array.from(categorySet);
 
   // --- Filtered Pantries ---
-  const filteredPantries = selectedCategory
-    ? entries.filter(pantry =>
-        Object.keys(pantry).some(
-          key => key.startsWith("categories/") && pantry[key] === selectedCategory
-        )
-      )
-    : entries;
+  const filteredPantries = [];
 
   // --- Handlers ---
   const handleCardPress = (item) => {
@@ -112,9 +104,7 @@ export default function BottomDrawer({
                       selectedCategory === category && styles.selectedFilter,
                     ]}
                     onPress={() =>
-                      setSelectedCategory(prev =>
-                        prev === category ? null : category
-                      )
+                      console.log(`Selected Category: ${category}`)
                     }
                   >
                     <Text style={styles.filterText}>{category}</Text>
@@ -125,7 +115,7 @@ export default function BottomDrawer({
 
             {/* Pantry List */}
             <FlatList
-              data={filteredPantries}
+              data={entries}
               keyExtractor={item => item.id.toString()}
               renderItem={({ item }) => (
                 <Pressable onPress={() => handleCardPress(item)}>
