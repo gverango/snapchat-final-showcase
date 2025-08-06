@@ -91,7 +91,7 @@ export default function BottomDetailDrawer({
                             )}
                         </View>
 
-                        <SnapUploads/>
+                        <SnapUploads pantry={pantry}/>
 
                         <TouchableOpacity onPress={onClose} style={styles.backButton}>
                             <Text style={styles.backButtonText}>Back</Text>
