@@ -4,10 +4,13 @@ import { useAuthentication } from "../utils/hooks/useAuthentication";
 import { useRealtimeChat } from "../hooks/use-realtime-chat";
 import { useChatScroll } from "../hooks/use-chat-scroll";
 import { getChat } from "../../getChatGPT";
+import { getImageChat } from "../../getImageChatGPT";
+
+
 
 export default function GroupChatScreen({ route, navigation }) {
   const { user } = useAuthentication();
-  const username = user?.email || 'Guest';
+  const username = user?.email || 'myAI';
 
   const { messages, sendMessage, isConnected } = useRealtimeChat({
     roomName: 'global_room',
@@ -30,11 +33,27 @@ export default function GroupChatScreen({ route, navigation }) {
   };
 
   useEffect(() => {
+  async function fetchResponse() {
     if (route?.params?.initialMessage) {
-      addMessage(route.params.initialMessage);
-      navigation.setParams({ initialMessage: null });
+      const prompt = route.params.initialMessage;
+      const imageUrl = route.params.imageUrl;
+
+      // addMessage("test")
+      const reply = await getImageChat({ prompt, imageUrl });
+
+      const text = reply.choices[0].message.content;
+
+      console.log(text);
+
+      addMessage(text);
+
+      navigation.setParams({ initialMessage: null, imageUrl: null });
     }
-  }, [route?.params?.initialMessage]);
+  }
+
+  fetchResponse();
+}, [route?.params?.initialMessage]);
+
 
   useEffect(() => {
 

@@ -7,8 +7,8 @@ import defaultProfileImage from "../../assets/snapchat/defaultprofile12.png";
 //Temporary Solution to avoid warning on user screen
 const error = console.error;
 console.error = (...args) => {
-  if (/defaultProps/.test(args[0])) return;
-  error(...args);
+  // if (/defaultProps/.test(args[0])) return;
+  // error(...args);
 };
 
 const CHATBOT_USER_OBJ = {

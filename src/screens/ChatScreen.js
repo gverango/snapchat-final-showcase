@@ -87,7 +87,7 @@ export default function ChatScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <AiButton imageUrl="https://cdn.britannica.com/77/81277-050-2A6A35B2/Adelie-penguin.jpg" />
+      <AiButton image_url="https://httkhtqkarrfmxpssjph.supabase.co/storage/v1/object/public/snaps/fire.png" />
 
     </View>
   );

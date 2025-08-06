@@ -1,16 +1,20 @@
 import React from "react";
 import { View, TouchableOpacity, Image, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native"; // 👈 Add this
+import { useNavigation } from "@react-navigation/native"; 
 
-export default function AiButton({imageUrl}) {
-  // const imageUrl = "https://cdn.britannica.com/77/81277-050-2A6A35B2/Adelie-penguin.jpg";
+export default function AiButton({image_url}) {
   const navigation = useNavigation();
 
   function pressedButton() {
     console.log("THIS WAS PRESSED");
 
-    navigation.navigate("GroupChat", {
-      initialMessage: `here is an image: ${imageUrl} describe it`,
+    // navigation.navigate("GroupChat", {
+    //   initialMessage: "Describe this image be VERY short!!!",
+    //   imageUrl: image_url,
+    // });
+
+    navigation.navigate("SnapScreen", {
+      imageUrl: "https://httkhtqkarrfmxpssjph.supabase.co/storage/v1/object/public/snaps/food.jpeg"
     });
   }
 
@@ -18,9 +22,7 @@ export default function AiButton({imageUrl}) {
     <View>
       <TouchableOpacity onPress={pressedButton} style={styles.button}>
         <Image
-          source={{
-            uri: "https://www.figma.com/community/resource/74b03344-29a5-4c98-a507-ea0ed86d7d1b/thumbnail",
-          }}
+          source={require('../../assets/carrotIcon.png')}
           style={styles.image}
           resizeMode="cover"
         />
