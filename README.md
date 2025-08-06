@@ -1,36 +1,108 @@
-# Final Project Starter
+https://www.figma.com/board/XXPGhIz2iyU0lOEC51dEwI/Snap-Academies-Showcase-%F0%9F%91%BB?node-id=3363-8411&t=ZJ71y7JCW5cnfKdd-1
 
-This will be the starter code for your final project! But first, we're going to spend a day making improvements to it. We'll use pull requests to manage this, and for that you'll need to be on your own branch. You can work in pairs or on your own.
+<a id="readme-top"></a>
 
-## Fork the Repository 
-Click on the Fork button: This is usually found in the top-right corner of the repository's page. This will create a copy of the repository under your own GitHub account.
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/gverango/snapchat-final-showcase">
+    <img src="https://github.com/Snap-Engineering-Academy-2025/Milestones/raw/main/SEA%20Logomark.png" alt="Logo" width="180" height="80">
+  </a>
 
-## Clone the Forked Repository
-1. Go to your forked repository on GitHub.
-2. Click on the green "Code" button and copy the command.
-3. Open your terminal or Git Bash and run it! It'll look like this: 
-```js
-gh repo clone your-username/repository-name
-```
+<h3 align="center">snapchat-final-showcase</h3>
 
-4. Navigate to the repository directory
+  <p align="center">
+    this is our final project insert whatever
+  </p>
+</div>
 
-# Install Packages
-1. Run the following command to be able to run your program.
-```js
-$ npx expo installs
-```
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+  </ol>
+</details>
 
-# Set Up the Upstream Remote
-1. Add the original repository as a remote: This allows you to pull in updates from the original repository.
-```js
-$ git remote add upstream https://github.com/Snap-Engineering-Academy-2025/SnapChatStarterForkable.git
-```
-2. Verify the new remote named 'upstream'
+<!-- ABOUT THE PROJECT -->
 
-```js
-$ git remote -v
-```
-##  Add Supabase Environment Variable!
+## About The Project
 
-Get the code running! You'll need to rename `.env.example` to `.env.local` file. You should be able to reuse the Supabase keys from earlier's week project.
+insert later
+
+Key Features:
+- insert later
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Built With 
+
+- React Native — https://reactnative.dev
+- Expo — https://expo.dev
+- Supabase — https://supabase.com
+- ChatGPT API - https://openai.com/api/
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- GETTING STARTED -->
+
+## Getting Started
+
+Follow these steps to run the app locally.
+
+## Installation
+
+1. **Clone the repo**
+
+   ```bash
+   git clone https://github.com/AlejandroLarson/SnapChatStarterForkable.git
+   cd SnapChatStarterForkable
+   ```
+
+2. **Install dependencies**
+
+   Use Expo’s installer to ensure native modules match the Expo SDK version:
+
+   ```bash
+   npx expo install
+   ```
+
+3. **Create environment file**
+
+   Create a `.env.local` file in the root directory with your Supabase credentials:
+
+   ```
+   EXPO_PUBLIC_SUPABASE_URL=your_supabase_url
+   EXPO_PUBLIC_SUPABASE_KEY=your_supabase_anon_key
+   API_KEY=your_chatgpt_api_key
+   ```
+
+   Replace with your actual Supabase project URL and anon key.
+
+4. **Start the app**
+
+   ```bash
+   npx expo start
+   ```
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- USAGE EXAMPLES -->
+
+## Usage
+
+insert later
+<p align="right">(<a href="#readme-top">back to top</a>)</p>

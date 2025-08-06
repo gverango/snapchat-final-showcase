@@ -1,110 +1,140 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import MapView, { Marker } from "react-native-maps";
 import {
   StyleSheet,
   View,
   Dimensions,
-  Image,
   Text,
-  TouchableOpacity,
-  Pressable,
 } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 import * as Location from "expo-location";
+import PartyButton from "../components/PartyButton";
+import BottomDrawer from "../components/BottomDrawer";
+import { supabase } from "../utils/hooks/supabase";
 
-import Ionicons from "react-native-vector-icons/Ionicons";
+// --- Helper Functions ---
+const fetchPantries = async (setEntries) => {
+  let { data, error } = await supabase.from("pantries").select("*");
+  if (error) {
+    console.error("Error fetching pantries:", error);
+  } else {
+    setEntries(data);
+  }
+};
 
 export default function MapScreen({ navigation }) {
-  const tabBarHeight = useBottomTabBarHeight();
-  const insets = useSafeAreaInsets();
+  // --- State ---
+  const [visible, setVisible] = useState(false);
+  const [entries, setEntries] = useState([]);
+  const [showMarkers, setShowMarkers] = useState(false);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [currentRegion, setCurrentRegion] = useState(null);
+  const [selectedPantry, setSelectedPantry] = useState(null);
+  const mapRef = useRef(null);
 
-  const [currentRegion, setCurrentRegion] = useState({
-    latitude: 34.0211573,
-    longitude: -118.4503864,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
+  // --- Effects ---
+  useEffect(() => {
+    fetchPantries(setEntries);
+  }, []);
 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
-        return;
+        return errorMsg;
       }
-
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
       setCurrentRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+        latitude: 34.018165588378906,
+        longitude: -118.45117950439453,
+        latitudeDelta: 0.1,
+        longitudeDelta: 0.05,
       });
     })();
   }, []);
 
-  let text = "Waiting...";
-  text = JSON.stringify(location);
+  // --- Handlers ---
+  const handleMarkerPress = (entry) => {
+    setVisible(true);
+    setSelectedPantry(entry);
+  };
+
+  const flyToPantry = (pantry) => {
+    if (!pantry) return;
+    const lat = parseFloat(pantry.latitude); 
+    const lng = parseFloat(pantry.longitude);
+    if (
+      mapRef.current &&
+      !isNaN(lat) &&
+      !isNaN(lng)
+    ) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: lat,
+          longitude: lng,
+          latitudeDelta: 0.045,
+          longitudeDelta: 0.045,
+        },
+        500
+      );
+    }
+  };
+
+  // --- Render ---
+  const tabBarHeight = useBottomTabBarHeight();
 
   return (
     <View style={[styles.container, { marginBottom: tabBarHeight }]}>
-      <MapView
-        style={styles.map}
-        region={currentRegion}
-        showsUserLocation={true}
-        showsMyLocationButton={true}
-      />
+      {currentRegion ? (
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          region={currentRegion}
+          showsUserLocation={true}
+          showsMyLocationButton={true}
+        >
+          {visible && location && showMarkers &&
+            entries.map((entry) => {
+              const lat = parseFloat(entry.latitude);
+              const lng = parseFloat(entry.longitude);
+              if (isNaN(lat) || isNaN(lng)) return null;
+              return (
+                <Marker
+                  key={entry.id}
+                  coordinate={{ latitude: lat, longitude: lng }}
+                  title={entry.title}
+                  description={entry.description}
+                  onPress={() => handleMarkerPress(entry)}
+                  pinColor={selectedPantry?.id === entry.id ? "blue" : "red"}
+                />
+              );
+            })}
+        </MapView>
+      ) : (
+        <Text>Loading map...</Text>
+      )}
 
-      <View style={[styles.mapFooter]}>
+      <View style={styles.mapFooter}>
         <View style={styles.locationContainer}>
-          <TouchableOpacity
-            style={[styles.userLocation, styles.shadow]}
+          <PartyButton
             onPress={() => {
-              console.log("Go to user location!");
-              const { latitude, longitude } = location.coords;
-              setCurrentRegion({ ...currentRegion, latitude, longitude });
+              setVisible(true);
+              setShowMarkers(true);
             }}
-          >
-            <Ionicons name="navigate" size={15} color="black" />
-          </TouchableOpacity>
-        </View>
-        <View style={[styles.bitmojiContainer, styles.shadow]}>
-          <Pressable
-            onPress={() => {
-              navigation.navigate("Event");
+          />
+          <BottomDrawer
+            entries={entries}
+            isVisible={visible}
+            onClose={() => setVisible(false)}
+            selectedPantry={selectedPantry}
+            setSelectedPantry={(pantry) => {
+              setSelectedPantry(pantry);
+              flyToPantry(pantry);
             }}
-          >
-            <View style={styles.myBitmoji}>
-              <Ionicons name="calendar-outline" size={50} color="gray" />
-              <View style={styles.bitmojiTextContainer}>
-                <Text style={styles.bitmojiText}>Events</Text>
-              </View>
-            </View>
-          </Pressable>
-
-          <View style={styles.places}>
-            <Image
-              style={styles.bitmojiImage}
-              source={require("../../assets/snapchat/personalBitmoji.png")}
-            />
-            <View style={styles.bitmojiTextContainer}>
-              <Text style={styles.bitmojiText}>Places</Text>
-            </View>
-          </View>
-          <View style={styles.myFriends}>
-            <Image
-              style={styles.bitmojiImage}
-              source={require("../../assets/snapchat/personalBitmoji.png")}
-            />
-            <View style={styles.bitmojiTextContainer}>
-              <Text style={styles.bitmojiText}>Friends</Text>
-            </View>
-          </View>
+          />
         </View>
       </View>
     </View>
@@ -157,45 +187,4 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     elevation: 4,
   },
-  bitmojiContainer: {
-    width: "100%",
-    backgroundColor: "transparent",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-  },
-  myBitmoji: {
-    width: 70,
-    height: 70,
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: 5,
-  },
-  bitmojiImage: {
-    width: 50,
-    height: 50,
-  },
-  bitmojiTextContainer: {
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 4,
-  },
-  bitmojiText: {
-    fontSize: 10,
-    fontWeight: "700",
-  },
-  places: {
-    width: 70,
-    height: 70,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  myFriends: {
-    width: 70,
-    height: 70,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  calendarIcon: {},
 });
