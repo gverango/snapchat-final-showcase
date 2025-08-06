@@ -5,7 +5,6 @@ import { useRealtimeChat } from "../hooks/use-realtime-chat";
 import { useChatScroll } from "../hooks/use-chat-scroll";
 import { getChat } from "../../getChatGPT";
 
-
 export default function GroupChatScreen({ route, navigation }) {
   const { user } = useAuthentication();
   const username = user?.email || 'Guest';
@@ -17,15 +16,25 @@ export default function GroupChatScreen({ route, navigation }) {
 
   const [input, setInput] = useState('');
   const previousMessagesRef = useRef([]);
-
   const { containerRef, scrollToBottom } = useChatScroll();
 
-  const handleSend = () => {
-    if (input.trim() !== '') {
-      sendMessage(input.trim());
-      setInput('');
+  const addMessage = (msg, userEmail = username) => {
+    if (msg.trim() !== '') {
+      sendMessage(msg.trim(), userEmail);
     }
   };
+
+  const handleSend = () => {
+    addMessage(input);
+    setInput('');
+  };
+
+  useEffect(() => {
+    if (route?.params?.initialMessage) {
+      addMessage(route.params.initialMessage);
+      navigation.setParams({ initialMessage: null });
+    }
+  }, [route?.params?.initialMessage]);
 
   useEffect(() => {
 
@@ -85,6 +94,7 @@ export default function GroupChatScreen({ route, navigation }) {
         }}
         onContentSizeChange={scrollToBottom}
       />
+
       <View style={styles.inputContainer}>
         <TextInput
           value={input}
