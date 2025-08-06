@@ -13,7 +13,7 @@ import {
   Pressable,
 } from "react-native";
 import PantryCard from "./PantryCard";
-import PantryDetailCard from "./PantryDetailCard";
+import BottomDetailDrawer from "./BottomDetailDrawer";
 
 const { height } = Dimensions.get("window");
 
@@ -31,16 +31,16 @@ export default function BottomDrawer({
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   // --- Categories ---
-const categorySet = new Set();
-entries.forEach(item => {
-  for (let i = 0; i <= 6; i++) { // To be changed when we refine supabase rows
-    const category = item[`categories/${i}`];
-    if (category !== "") {
-      categorySet.add(category);
+  const categorySet = new Set();
+  entries.forEach(item => {
+    for (let i = 0; i <= 6; i++) { // To be changed when we refine supabase rows
+      const category = item[`categories/${i}`];
+      if (category !== "") {
+        categorySet.add(category);
+      }
     }
-  }
-});
-const uniqueCategories = Array.from(categorySet);
+  });
+  const uniqueCategories = Array.from(categorySet);
 
   // --- Filtered Pantries ---
   const filteredPantries = [];
@@ -48,6 +48,11 @@ const uniqueCategories = Array.from(categorySet);
   // --- Handlers ---
   const handleCardPress = (item) => {
     setSelectedPantry(item);
+    console.log(`PantryCard clicked, Selected Pantry: ${item}`);
+  };
+  const handleFilterPress = (category) => {
+    console.log(`Selected Category: ${category}`)
+    setSelectedCategory(category)
   };
 
   // --- Animation Effect ---
@@ -62,77 +67,78 @@ const uniqueCategories = Array.from(categorySet);
   // --- Render ---
   return (
     <>
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={StyleSheet.absoluteFillObject}>
-          <Animated.View
-            style={[
-              styles.drawer,
-              { transform: [{ translateY }] },
-            ]}
-          >
-            {/* Header */}
-            <View style={styles.headerContainer}>
-              <Image
-                style={styles.entriesImage}
-                source={{
-                  uri: "https://media.istockphoto.com/id/2150313780/vector/food-donation-outline-icon-box-with-food.jpg?s=612x612&w=0&k=20&c=wGzHLux3IWsArmzBQod9Jw9VAZklhofs_b4JlI8THDU=",
-                }}
-              />
-              <View style={styles.textContainer}>
-                <Text style={styles.header}>Find Food Assistance</Text>
-                <Text style={styles.subheader}>Powered by Pantry Path</Text>
-              </View>
-              {/* 
+      {!selectedPantry && (
+        <TouchableWithoutFeedback onPress={onClose}>
+          <View style={StyleSheet.absoluteFillObject}>
+            <Animated.View
+              style={[
+                styles.drawer,
+                { transform: [{ translateY }] },
+              ]}
+            >
+              {/* Header */}
+              <View style={styles.headerContainer}>
+                <Image
+                  style={styles.entriesImage}
+                  source={{
+                    uri: "https://media.istockphoto.com/id/2150313780/vector/food-donation-outline-icon-box-with-food.jpg?s=612x612&w=0&k=20&c=wGzHLux3IWsArmzBQod9Jw9VAZklhofs_b4JlI8THDU=",
+                  }}
+                />
+                <View style={styles.textContainer}>
+                  <Text style={styles.header}>Find Food Assistance</Text>
+                  <Text style={styles.subheader}>Powered by Pantry Path</Text>
+                </View>
+                {/* 
               <Pressable onPress={onClose} style={styles.closeButton}>
                 <Text style={styles.closeButtonText}>x</Text>
               </Pressable> 
               */}
-            </View>
+              </View>
 
-            {/* Category Filters */}
-            <View>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.filterContainer}
-              >
-                {uniqueCategories.map((category, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={[
-                      styles.filterButton,
-                      selectedCategory === category && styles.selectedFilter,
-                    ]}
-                    onPress={() =>
-                      console.log(`Selected Category: ${category}`)
-                    }
-                  >
-                    <Text style={styles.filterText}>{category}</Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
+              {/* Category Filters */}
+              <View>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.filterContainer}
+                >
+                  {uniqueCategories.map((category, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={[
+                        styles.filterButton,
+                        selectedCategory === category && styles.selectedFilter,
+                      ]}
+                      onPress={() =>
+                        handleFilterPress(category)
+                      }
+                    >
+                      <Text style={styles.filterText}>{category}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
 
-            {/* Pantry List */}
-            <FlatList
-              data={entries}
-              keyExtractor={item => item.id.toString()}
-              renderItem={({ item }) => (
-                <Pressable onPress={() => handleCardPress(item)}>
-                  <PantryCard pantry={item} />
-                </Pressable>
-              )}
-            />
-          </Animated.View>
-        </View>
-      </TouchableWithoutFeedback>
-
-      {/* Pantry Detail Card - Modal for now */}
-      <PantryDetailCard
-        visible={!!selectedPantry}
+              {/* Pantry List */}
+              <FlatList
+                data={entries}
+                keyExtractor={item => item.id.toString()}
+                renderItem={({ item }) => (
+                  <Pressable onPress={() => handleCardPress(item)}>
+                    <PantryCard pantry={item} />
+                  </Pressable>
+                )}
+              />
+            </Animated.View>
+          </View>
+        </TouchableWithoutFeedback>
+      )}
+      <BottomDetailDrawer
+        isVisible={!!selectedPantry}
         pantry={selectedPantry}
         onClose={() => setSelectedPantry(null)}
       />
+
     </>
   );
 }
@@ -211,6 +217,6 @@ const styles = StyleSheet.create({
   },
   filterText: {
     fontSize: 14,
-     color:'#333',
+    color: '#333',
   },
 });
