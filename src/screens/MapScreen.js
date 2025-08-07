@@ -48,8 +48,8 @@ export default function MapScreen({ navigation }) {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
       setCurrentRegion({
-        latitude: 34.018165588378906,
-        longitude: -118.45117950439453,
+        latitude: 34.0190324, // 2850 Ocean Park Blvd, Santa Monica, CA
+        longitude: -118.4552004,
         latitudeDelta: 0.1,
         longitudeDelta: 0.05,
       });
