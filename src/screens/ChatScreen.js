@@ -87,7 +87,7 @@ export default function ChatScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <AiButton image_url="https://httkhtqkarrfmxpssjph.supabase.co/storage/v1/object/public/snaps/fire.png" />
+      {/* <AiButton image_url="https://httkhtqkarrfmxpssjph.supabase.co/storage/v1/object/public/snaps/fire.png" /> */}
 
     </View>
   );

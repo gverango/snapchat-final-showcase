@@ -5,7 +5,7 @@ import { useRealtimeChat } from "../hooks/use-realtime-chat";
 import { useChatScroll } from "../hooks/use-chat-scroll";
 import { getChat } from "../../getChatGPT";
 import { getImageChat } from "../../getImageChatGPT";
-
+import ScreenButton from "../components/ScreenButton";
 
 
 export default function GroupChatScreen({ route, navigation }) {
@@ -33,25 +33,11 @@ export default function GroupChatScreen({ route, navigation }) {
   };
 
   useEffect(() => {
-  async function fetchResponse() {
-    if (route?.params?.initialMessage) {
-      const prompt = route.params.initialMessage;
-      const imageUrl = route.params.imageUrl;
-
-      // addMessage("test")
-      const reply = await getImageChat({ prompt, imageUrl });
-
-      const text = reply.choices[0].message.content;
-
-      console.log(text);
-
-      addMessage(text);
-
-      navigation.setParams({ initialMessage: null, imageUrl: null });
-    }
+  if (route?.params?.initialMessage) {
+    // navigation.replace("GroupChat", {
+    //   initialMessage: null,
+    // });
   }
-
-  fetchResponse();
 }, [route?.params?.initialMessage]);
 
 
@@ -99,6 +85,9 @@ export default function GroupChatScreen({ route, navigation }) {
         ref={containerRef}
         data={messages}
         keyExtractor={(item) => item.id}
+        // initialNumToRender={10}
+        // maxToRenderPerBatch={10}
+        // windowSize={5}
         renderItem={({ item }) => {
           const messageUser = item.user?.name?.split("@")[0] || item.user_email?.split("@")[0] || 'Unknown';
           const isSender = messageUser === username.split("@")[0];
@@ -113,6 +102,8 @@ export default function GroupChatScreen({ route, navigation }) {
         }}
         onContentSizeChange={scrollToBottom}
       />
+      
+      <ScreenButton image_url="https://httkhtqkarrfmxpssjph.supabase.co/storage/v1/object/public/snaps/food.jpeg"/>
 
       <View style={styles.inputContainer}>
         <TextInput

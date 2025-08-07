@@ -24,47 +24,57 @@ async function fetchInitialMessage() {
 export function useRealtimeChat({ roomName, username }) {
   const [messages, setMessages] = useState([]);
 
-  // get initial messages from table
-  useEffect(() => {
-    const fetchMessages = async () => {
-      const { data, error } = await supabase
-        .from(MESSAGES_TABLE)
-        .select('*')
-        .eq('room', roomName)
-        .order('created_at', { ascending: true });
+ useEffect(() => {
+  const fetchMessages = async () => {
+    const { data, error } = await supabase
+      .from(MESSAGES_TABLE)
+      .select('*')
+      .eq('room', roomName)
+      .order('created_at', { ascending: false })
+      .limit(5);
 
-      if (error) {
-        console.error('Error loading messages:', error);
-      } else {
-        setMessages(data);
+    if (error) {
+      console.error('Error loading messages:', error);
+    } else {
+      console.log('Initial fetch messages:', data.length);
+      setMessages(data);
+    }
+  };
+
+  fetchMessages();
+}, [roomName]);
+
+useEffect(() => {
+  const channel = supabase
+    .channel(`room-${roomName}`)
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: MESSAGES_TABLE,
+        filter: `room=eq.${roomName}`,
+      },
+      (payload) => {
+        // console.log('✅ Realtime message received:', payload.new);
+        setMessages((current) => [...current, payload.new]);
       }
-    };
+    )
+    .on('error', (error) => {
+      console.error('❌ Supabase channel error:', error); 
+    })
+    .subscribe((status) => {
+      console.log('📡 Subscription status:', status);
+    });
 
-    fetchMessages();
-  }, [roomName]);
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, [roomName]);
 
-  // 2. Subscribe to new INSERT events for this room
-  useEffect(() => {
-    const channel = supabase
-      .channel(`room-${roomName}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: MESSAGES_TABLE,
-          filter: `room=eq.${roomName}`,
-        },
-        (payload) => {
-          setMessages((current) => [...current, payload.new]);
-        }
-      )
-      .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [roomName]);
+
+
 
   // 3. Insert a new message into messages
   const sendMessage = useCallback(

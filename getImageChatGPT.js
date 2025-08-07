@@ -13,7 +13,7 @@ export const getImageChat = async ({ prompt, imageUrl }) => {
         {
           type: "image_url",
           image_url: {
-            url: imageUrl,
+            url: imageUrl.trim(), // remove any accidental whitespace
           },
         },
       ],
