@@ -17,48 +17,58 @@ export default function SnapUploads({ pantry }) {
     const BUCKET_NAME = "snaps";
     const SUPABASE_URL = "https://httkhtqkarrfmxpssjph.supabase.co";
 
-    
-    async function uploadSnap() {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            quality: 1,
-        });
+async function uploadSnap() {
+    const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+    });
 
-        if (!result.canceled) {
-            const imageUri = result.assets[0].uri;
+    if (!result.canceled) {
+        const image = result.assets[0];
+        const filename = `${Date.now()}.jpg`;
+        const path = `${pantry.id}/${filename}`;
 
-            try {
-                const response = await fetch(imageUri);
-                const blob = await response.blob();
-                const filename = `${Date.now()}.jpg`;
-                const path = `${pantry.id}/${filename}`;
+        try {
+            // Convert image URI to a File object via FormData
+            const formData = new FormData();
+            formData.append('file', {
+                uri: image.uri,
+                name: filename,
+                type: 'image/jpeg',
+            });
 
-                const { data, error } = await supabase
-                    .storage
-                    .from(BUCKET_NAME)
-                    .upload(path, blob, {
-                        contentType: 'image/jpeg',
-                        upsert: true,
-                    });
+            const { data, error } = await supabase.storage
+                .from(BUCKET_NAME)
+                .createSignedUploadUrl(path);
 
-
-
-                console.log("Upload response:", data); // data returns null in console
-
-                if (error) {
-                    console.error("Upload error:", error);  // Make sure this prints something
-                    Alert.alert("Upload failed", error.message);
-
-                } else {
-                    console.log("Uploaded:", data);
-                    getSnaps(); // refresh view
-                }
-            } catch (err) {
-                console.error("Upload failed:", err);
+            if (error) {
+                console.error("Signed URL error:", error);
+                Alert.alert("Signed upload failed", error.message);
+                return;
             }
+
+            const uploadRes = await fetch(data.signedUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'image/jpeg',
+                },
+                body: formData._parts[0][1], // just the file
+            });
+
+            if (!uploadRes.ok) {
+                const errText = await uploadRes.text();
+                throw new Error(`Upload failed: ${errText}`);
+            }
+
+            console.log("Upload successful!");
+            getSnaps(); // Refresh view
+        } catch (err) {
+            console.error("Upload failed:", err);
+            Alert.alert("Upload failed", err.message);
         }
     }
+}
 
     async function getSnaps() {
         const { data, error } = await supabase
