@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import * as ImagePicker from 'expo-image-picker';
 import { supabase } from "../utils/hooks/supabase";
 import {
@@ -7,16 +7,89 @@ import {
     StyleSheet,
     TouchableOpacity,
     ScrollView,
+    Image,
     Alert,
-    Touchable,
 } from "react-native";
 
 export default function SnapUploads({ pantry }) {
+    const [snaps, setSnaps] = useState([]);
+
+    const BUCKET_NAME = "snaps";
+    const SUPABASE_URL = "https://httkhtqkarrfmxpssjph.supabase.co";
 
     
+    async function uploadSnap() {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            const imageUri = result.assets[0].uri;
+
+            try {
+                const response = await fetch(imageUri);
+                const blob = await response.blob();
+                const filename = `${Date.now()}.jpg`;
+                const path = `${pantry.id}/${filename}`;
+
+                const { data, error } = await supabase
+                    .storage
+                    .from(BUCKET_NAME)
+                    .upload(path, blob, {
+                        contentType: 'image/jpeg',
+                        upsert: true,
+                    });
+
+
+
+                console.log("Upload response:", data); // data returns null in console
+
+                if (error) {
+                    console.error("Upload error:", error);  // Make sure this prints something
+                    Alert.alert("Upload failed", error.message);
+
+                } else {
+                    console.log("Uploaded:", data);
+                    getSnaps(); // refresh view
+                }
+            } catch (err) {
+                console.error("Upload failed:", err);
+            }
+        }
+    }
+
+    async function getSnaps() {
+        const { data, error } = await supabase
+            .storage
+            .from(BUCKET_NAME)
+            .list(`${pantry.id}/`, {
+                limit: 20,
+                offset: 0,
+                sortBy: { column: 'created_at', order: 'desc' },
+            });
+
+        if (error) {
+            console.error("Fetch error:", error);
+            return;
+        }
+
+        const urls = data.map(file => ({
+            name: file.name,
+            url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${pantry.id}/${file.name}`,
+        }));
+
+        setSnaps(urls);
+    }
+
+    useEffect(() => {
+        getSnaps();
+    }, []);
+
     return (
         <View>
-            <TouchableOpacity style={styles.uploadButton} onPress={()=> console.log("Upload button pressed")}>
+            <TouchableOpacity style={styles.uploadButton} onPress={uploadSnap}>
                 <Text style={styles.uploadButtonText}>Upload</Text>
             </TouchableOpacity>
 
@@ -25,23 +98,16 @@ export default function SnapUploads({ pantry }) {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.snapsContainer}
             >
-                <TouchableOpacity onPress={() =>console.log("Snap pressed")}>
-                    <View style={[styles.snap, { backgroundColor: "rgba(82, 0, 233, 1)" }]}>
-                        <Text>Snap 1</Text>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => console.log("Snap pressed")}>
-                    <View style={[styles.snap, { backgroundColor: "rgb(0,255,0)" }]}>
-                        <Text>Snap 2</Text>
-                    </View>
-
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => console.log("Snap pressed")}>
-
-                    <View style={[styles.snap, { backgroundColor: "rgba(255, 59, 248, 1)" }]}>
-                        <Text>Snap 3</Text>
-                    </View>
-                </TouchableOpacity>
+                {snaps.map((media) => (
+                    <TouchableOpacity key={media.name} onPress={() => console.log("Media: ", media)}>
+                        <View style={styles.snap}>
+                            <Image
+                                source={{ uri: media.url }}
+                                style={{ width: 60, height: 90, borderRadius: 10 }}
+                            />
+                        </View>
+                    </TouchableOpacity>
+                ))}
             </ScrollView>
         </View>
     );
@@ -63,7 +129,7 @@ const styles = StyleSheet.create({
     snapsContainer: {
         flexDirection: "row",
         padding: 10,
-        backgroundColor: "#dcdcdcff",
+        backgroundColor: "#dcdcdc",
         gap: 10,
         marginTop: 10,
     },
@@ -73,5 +139,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
+        overflow: 'hidden',
+        backgroundColor: '#fff',
     },
 });
