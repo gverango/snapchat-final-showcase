@@ -5,8 +5,6 @@ export function useAuthentication() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Retrieve the current session
-
     const fetchSession = async () => {
       const {
         data: { session },
@@ -16,7 +14,6 @@ export function useAuthentication() {
 
     fetchSession();
 
-    // Set up an auth state change listener
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -28,6 +25,5 @@ export function useAuthentication() {
     };
   }, []);
 
-  // console.log("USER", user)
   return { user };
 }

@@ -1,96 +1,88 @@
-import { useCallback, useEffect, useState } from 'react';
-import { supabase } from '../utils/hooks/supabase';
+import { useCallback, useEffect, useState } from "react";
+import { supabase } from "../utils/hooks/supabase";
 
-const MESSAGES_TABLE = 'messages';
-
-const prompt = [
-  {
-    role: "system",
-    content: "act crazy all caps"
-  }];
-
-async function fetchInitialMessage() {
-  const response = await getChat(prompt);
-  // const message = response.choices[0].message;
-  // console.log("message: ", message);
-  const content = response.choices[0].message.content;
-  console.log("content: ", content);
-
-  return content;
-}
-
-
+const MESSAGES_TABLE = "messages";
 
 export function useRealtimeChat({ roomName, username }) {
   const [messages, setMessages] = useState([]);
 
- useEffect(() => {
-  const fetchMessages = async () => {
-    const { data, error } = await supabase
-      .from(MESSAGES_TABLE)
-      .select('*')
-      .eq('room', roomName)
-      .order('created_at', { ascending: true })
-      .limit(5);
+  useEffect(() => {
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from(MESSAGES_TABLE)
+        .select("*")
+        .eq("room", roomName)
+        .order("created_at", { ascending: true });
 
-    if (error) {
-      console.error('Error loading messages:', error);
-    } else {
-      console.log('Initial fetch messages:', data.length);
-      setMessages(data);
-    }
-  };
+      if (error) {
+        console.error("Error loading messages:", error);
+      } else {
+        setMessages(data);
+      }
+    };
 
-  fetchMessages();
-}, [roomName]);
+    fetchMessages();
+  }, [roomName]);
 
-useEffect(() => {
-  const channel = supabase
-    .channel(`room-${roomName}`)
-    .on(
-      'postgres_changes',
+  useEffect(() => {
+    const channel = supabase.channel(`room-${roomName}`).on(
+      "postgres_changes",
       {
-        event: 'INSERT',
-        schema: 'public',
+        event: "INSERT",
+        schema: "public",
         table: MESSAGES_TABLE,
         filter: `room=eq.${roomName}`,
       },
       (payload) => {
-        // console.log('✅ Realtime message received:', payload.new);
         setMessages((current) => [...current, payload.new]);
       }
-    )
-    .on('error', (error) => {
-      console.error('❌ Supabase channel error:', error); 
-    })
-    .subscribe((status) => {
-      console.log('📡 Subscription status:', status);
-    });
+    );
 
-  return () => {
-    supabase.removeChannel(channel);
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [roomName]);
+
+  const deleteFirstRow = async () => {
+    const { data, error: fetchError } = await supabase
+      .from(MESSAGES_TABLE)
+      .select("*")
+      .order("id", { ascending: true })
+      .limit(1);
+
+    if (fetchError) {
+      console.error("Error fetching first row:", fetchError);
+      return;
+    }
+
+    const { error: deleteError } = await supabase
+      .from(MESSAGES_TABLE)
+      .delete()
+      .eq("id", data[0].id);
+
+    if (deleteError) {
+      console.error("Error deleting first row:", deleteError);
+    }
   };
-}, [roomName]);
 
-
-
-
-
-  // 3. Insert a new message into messages
-  const sendMessage = useCallback(
-    async (content, user = username) => {
-      const { error } = await supabase.from(MESSAGES_TABLE).insert({
+  const sendMessage = useCallback(async (content, user) => {
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
         content,
         user_email: user,
-        room: roomName,
-      });
+        room: "global_room",
+        created_at: new Date().toISOString(),
+      },
+    ]);
 
-      if (error) {
-        console.error('Send message error:', error);
-      }
-    },
-    [roomName, username]
-  );
+    await deleteFirstRow();
+
+    if (error) {
+      console.error("Send message error:", error);
+    }
+  }, []);
 
   return { messages, sendMessage };
 }

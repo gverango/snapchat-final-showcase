@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, FlatList, TextInput, Button, StyleSheet, Platform, SafeAreaView } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TextInput,
+  Button,
+  StyleSheet,
+  Platform,
+  SafeAreaView,
+} from "react-native";
 import { useAuthentication } from "../utils/hooks/useAuthentication";
 import { useRealtimeChat } from "../hooks/use-realtime-chat";
 import { useChatScroll } from "../hooks/use-chat-scroll";
@@ -7,67 +16,68 @@ import { getChat } from "../../getChatGPT";
 import { getImageChat } from "../../getImageChatGPT";
 import ScreenButton from "../components/ScreenButton";
 
-
 export default function GroupChatScreen({ route, navigation }) {
   const { user } = useAuthentication();
-  const username = user?.email || 'myAI';
+  const username = user?.email || "myAI";
 
   const { messages, sendMessage, isConnected } = useRealtimeChat({
-    roomName: 'global_room',
-    username
+    roomName: "global_room",
+    username,
   });
 
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const previousMessagesRef = useRef([]);
   const { containerRef, scrollToBottom } = useChatScroll();
 
   const addMessage = (msg, userEmail = username) => {
-    if (msg.trim() !== '') {
+    if (msg.trim() !== "") {
       sendMessage(msg.trim(), userEmail);
     }
   };
 
   const handleSend = () => {
     addMessage(input);
-    setInput('');
+    setInput("");
   };
 
   useEffect(() => {
-  if (route?.params?.initialMessage) {
-    // navigation.replace("GroupChat", {
-    //   initialMessage: null,
-    // });
-  }
-}, [route?.params?.initialMessage]);
-
+    if (route?.params?.initialMessage) {
+      navigation.setParams({ initialMessage: null });
+    }
+  }, [route?.params?.initialMessage]);
 
   useEffect(() => {
-
     const previousMessages = previousMessagesRef.current;
 
     if (messages.length > previousMessages.length) {
-
       const newMessages = messages.slice(previousMessages.length);
 
       const newUserMessages = newMessages.filter(
-        (msg) => msg.user_email !== 'myAI@ai.chatroom' && msg.user_email === username
+        (msg) =>
+          msg.user_email !== "myAI@ai.chatroom" && msg.user_email === username
       );
 
-      if (newUserMessages.length > 0 && newMessages[newMessages.length-1].user_email != 'myAI@ai.chatroom') {
+      if (
+        newUserMessages.length > 0 &&
+        newMessages[newMessages.length - 1].user_email !== "myAI@ai.chatroom"
+      ) {
         const openAIMessages = [
-          { role: "system", content: "you are myAI from snapchat -> be helpful" },
-          ...messages.map(msg => ({
-            role: msg.user_email === 'myAI@ai.chatroom' ? 'assistant' : 'user',
+          {
+            role: "system",
+            content: "you are myAI from snapchat -> be helpful",
+          },
+          ...messages.map((msg) => ({
+            role: msg.user_email === "myAI@ai.chatroom" ? "assistant" : "user",
             content: msg.content,
-          }))
+          })),
         ];
 
         getChat(openAIMessages)
-          .then(response => {
+          .then((response) => {
             const aiReply = response.choices[0].message.content;
-            sendMessage(aiReply, 'myAI@ai.chatroom');
+            sendMessage(aiReply, "myAI@ai.chatroom");
           })
-          .catch(err => console.error("OpenAI error:", err));
+          .catch((err) => console.error("OpenAI error:", err));
       }
     }
 
@@ -85,25 +95,30 @@ export default function GroupChatScreen({ route, navigation }) {
         ref={containerRef}
         data={messages}
         keyExtractor={(item) => item.id}
-        // initialNumToRender={10}
-        // maxToRenderPerBatch={10}
-        // windowSize={5}
         renderItem={({ item }) => {
-          const messageUser = item.user?.name?.split("@")[0] || item.user_email?.split("@")[0] || 'Unknown';
+          const messageUser =
+            item.user?.name?.split("@")[0] ||
+            item.user_email?.split("@")[0] ||
+            "Unknown";
           const isSender = messageUser === username.split("@")[0];
 
           return (
-            <Text style={[styles.message, isSender ? styles.senderText : styles.otherText]}>
+            <Text
+              style={[
+                styles.message,
+                isSender ? styles.senderText : styles.otherText,
+              ]}
+            >
               <Text style={styles.username}>{messageUser} </Text>
-              {'\n'}
+              {"\n"}
               <Text style={styles.message}>{item.content}</Text>
             </Text>
           );
         }}
         onContentSizeChange={scrollToBottom}
       />
-      
-      <ScreenButton image_url="https://httkhtqkarrfmxpssjph.supabase.co/storage/v1/object/public/snaps/food.jpeg"/>
+
+      <ScreenButton image_url="https://httkhtqkarrfmxpssjph.supabase.co/storage/v1/object/public/snaps/food.jpeg" />
 
       <View style={styles.inputContainer}>
         <TextInput
@@ -120,27 +135,26 @@ export default function GroupChatScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20 },
-  header: { fontSize: 20, fontWeight: 'bold', marginBottom: 8 },
-  message: { paddingVertical: 4, fontSize: 16},
-  username: { fontWeight: 'bold' },
+  header: { fontSize: 20, fontWeight: "bold", marginBottom: 8 },
+  message: { paddingVertical: 4, fontSize: 16 },
+  username: { fontWeight: "bold" },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 8,
   },
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
     padding: 8,
     marginRight: 8,
   },
   senderText: {
-    color: 'darkred'
+    color: "darkred",
   },
   otherText: {
-    color: 'black'
+    color: "black",
   },
-
 });

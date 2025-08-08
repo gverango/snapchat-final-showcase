@@ -1,61 +1,57 @@
 import React from "react";
 import { View, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { getImageChat } from "../../getImageChatGPT"; 
-import { useCallback} from 'react';
-import { supabase } from '../utils/hooks/supabase';
+import { supabase } from "../utils/hooks/supabase";
+import { getImageChat } from "../../getImageChatGPT";
 
-const MESSAGES_TABLE = 'messages';
+const MESSAGES_TABLE = "messages";
 
-export default function AiButton({image_url}) {
+export default function AiButton({ image_url }) {
   const navigation = useNavigation();
-  
-  function pressedButton() {
-    console.log("Image URL:", image_url);
-    console.log("THIS WAS PRESSED");
 
-    const prompt = "Create a very simple short and clear recipe for the image you see."
-    const test = image_url
+  const deleteFirstRow = async () => {
+    const { data, error: fetchError } = await supabase
+      .from(MESSAGES_TABLE)
+      .select("*")
+      .order("id", { ascending: true })
+      .limit(1);
 
-    getImageChat({ prompt, imageUrl: test })
-    .then(response => {
-      const aiReply = response?.choices?.[0]?.message?.content;
-      console.log("AI RESPONDED!");
+    const { error: deleteError } = await supabase
+      .from(MESSAGES_TABLE)
+      .delete()
+      .eq("id", data[0].id);
 
-      sendMessage(aiReply, "myAI");
+    if (deleteError) {
+      console.error("Error deleting first row:", deleteError);
+    }
+  };
 
-      navigation.navigate("GroupChat", {initialMessage: "GAH",});
-    })
-    .catch(err => {
-      console.error("❌ OpenAI error:", err);
+  const pressedButton = async () => {
+    const prompt =
+      "Create a very simple short and clear recipe for the image you see.";
+    const test = image_url;
+
+    const response = await getImageChat({ prompt, imageUrl: test });
+    const aiReply = response?.choices?.[0]?.message?.content;
+
+    // console.log("AI RESPONDED:", aiReply);
+
+    await supabase.from(MESSAGES_TABLE).insert({
+      content: aiReply,
+      user_email: "myAI@ai.chatroom",
+      room: "global_room",
     });
 
-    // navigation.navigate("GroupChat", {
-    //   initialMessage: "Create a very simple short and clear recipe for the image you see. ",
-    //   imageUrl: image_url,
-    // });
-  }
+    await deleteFirstRow();
 
-  const sendMessage = useCallback(
-    async (content, user = username) => {
-      const { error } = await supabase.from(MESSAGES_TABLE).insert({
-        content,
-        user_email: user,
-        room: "global_room",
-      });
-
-      if (error) {
-        console.error('Send message error:', error);
-      }
-    },
-    ["global_room", "myAi"]
-  );
+    navigation.navigate("GroupChat", { initialMessage: "AI Reply sent" });
+  };
 
   return (
     <View>
       <TouchableOpacity onPress={pressedButton} style={styles.button}>
         <Image
-          source={require('../../assets/carrotIcon.png')}
+          source={require("../../assets/carrotIcon.png")}
           style={styles.image}
           resizeMode="cover"
         />
