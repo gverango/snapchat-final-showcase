@@ -30,7 +30,7 @@ export function useRealtimeChat({ roomName, username }) {
       .from(MESSAGES_TABLE)
       .select('*')
       .eq('room', roomName)
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: true })
       .limit(5);
 
     if (error) {
