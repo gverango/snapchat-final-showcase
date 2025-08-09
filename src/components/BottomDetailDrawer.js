@@ -71,9 +71,8 @@ export default function BottomDetailDrawer({
                     <View style={styles.headerContainer}>
                         <Image
                             style={styles.entriesImage}
-                            source={{
-                                uri: "https://media.istockphoto.com/id/2150313780/vector/food-donation-outline-icon-box-with-food.jpg?s=612x612&w=0&k=20&c=wGzHLux3IWsArmzBQod9Jw9VAZklhofs_b4JlI8THDU=",
-                            }}
+                            source={require("../../assets/shelfHelpIcon.jpg")}
+
                         />
                         <View style={styles.textContainer}>
                             <Text style={styles.header}>{pantry.title}</Text>

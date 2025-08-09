@@ -10,6 +10,7 @@ import {
     Image,
     Alert,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 export default function SnapUploads({ pantry }) {
     const [snaps, setSnaps] = useState([]);
@@ -69,6 +70,13 @@ async function uploadSnap() {
         }
     }
 }
+    const navigation = useNavigation();
+
+    const openSnap = (image_url) => {
+        navigation.navigate("SnapScreen", {
+        imageUrl: image_url
+    });
+    }
 
     async function getSnaps() {
         const { data, error } = await supabase
@@ -109,7 +117,7 @@ async function uploadSnap() {
                 contentContainerStyle={styles.snapsContainer}
             >
                 {snaps.map((media) => (
-                    <TouchableOpacity key={media.name} onPress={() => console.log("Media: ", media)}>
+                    <TouchableOpacity key={media.name} onPress={() => openSnap(media.url)}>
                         <View style={styles.snap}>
                             <Image
                                 source={{ uri: media.url }}
