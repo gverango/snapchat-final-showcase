@@ -79,7 +79,7 @@ export default function BottomDrawer({
               {/* Header */}
               <View style={styles.headerContainer}>
                 <Image
-                  style={styles.entriesImage}
+                  style={styles.shelfHelpIcon}
                   source={require("../../assets/shelfHelpIcon.jpg")}
 
                 />
@@ -105,17 +105,23 @@ export default function BottomDrawer({
                     <TouchableOpacity
                       key={index}
                       style={[
-                        styles.filterButton,
-                        selectedCategory === category && styles.selectedFilter,
+                        styles.filterChip,
+                        selectedCategory === category && styles.selectedChip,
                       ]}
-                      onPress={() =>
-                        handleFilterPress(category)
-                      }
+                      onPress={() => handleFilterPress(category)}
                     >
-                      <Text style={styles.filterText}>{category}</Text>
+                      <Text
+                        style={[
+                          styles.filterChipText,
+                          selectedCategory === category && styles.selectedChipText,
+                        ]}
+                      >
+                        {category}
+                      </Text>
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
+
               </View>
 
               {/* Pantry List */}
@@ -141,81 +147,74 @@ export default function BottomDrawer({
     </>
   );
 }
-
 const styles = StyleSheet.create({
   drawer: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
-    height: height * 0.6,
-    backgroundColor: "rgba(255, 255, 255, 1)",
+    height: height * 0.65,
+    backgroundColor: "#fff",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 16,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 10,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 12,
   },
   headerContainer: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: 10,
+    alignItems: "center",
+    marginBottom: 14,
   },
-  entriesImage: {
-    width: 50,
-    height: 50,
-    marginRight: 8,
-    borderRadius: 25,
+  shelfHelpIcon: {
+    width: 52,
+    height: 52,
+    marginRight: 10,
+    borderRadius: 26,
   },
   textContainer: {
-    flexDirection: "column",
+    flex: 1,
     justifyContent: "center",
   },
   header: {
     fontSize: 18,
-    fontWeight: "600",
-    marginTop: 2,
+    fontWeight: "700",
+    color: "#222",
   },
   subheader: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#666",
+    marginTop: 2,
   },
-  closeButton: {
-    marginLeft: 'auto',
-    backgroundColor: "#f2f2f2",
-    paddingRight: 10,
-    paddingLeft: 10,
-    paddingTop: 5,
-    paddingBottom: 5,
-    borderRadius: 100,
-    marginLeft: 100,
-    marginTop: 5,
-  },
-  closeButtonText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-  },
+  // Category chip container
   filterContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginVertical: 10,
+    flexDirection: "row",
     gap: 8,
+    marginBottom: 12,
   },
-  filterButton: {
-    backgroundColor: 'rgba(240, 240, 240, 1) ',
-    paddingHorizontal: 10,
+  filterChip: {
+    backgroundColor: "#EDEEEF",
+    borderColor: "#EDEEEF",
+    paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 20,
+    borderRadius: 18,
+    borderWidth: 1,
   },
-  selectedFilter: {
-    backgroundColor: 'rgba(255, 209, 45, 1)',
+  filterChipText: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: "#646567",
   },
-  filterText: {
-    fontSize: 14,
-    color: '#333',
+  selectedChip: {
+    backgroundColor: "#3da77e",
+    borderColor: "#3da77e",
   },
+  selectedChipText: {
+    color: "white",
+    fontWeight: "700",
+  },
+
 });

@@ -5,6 +5,7 @@ import {
   View,
   Dimensions,
   Text,
+  Image,
 } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import * as Location from "expo-location";
@@ -31,7 +32,12 @@ export default function MapScreen({ navigation }) {
   const [errorMsg, setErrorMsg] = useState(null);
   const [currentRegion, setCurrentRegion] = useState(null);
   const [selectedPantry, setSelectedPantry] = useState(null);
+  const [isPartyMode, setIsPartyMode] = useState(false);
+
   const mapRef = useRef(null);
+
+const bitmojiDefault = require("../../assets/sad phone.png");
+const bitmojiParty = require("../../assets/Dazzled.png");
 
   // --- Effects ---
   useEffect(() => {
@@ -64,7 +70,7 @@ export default function MapScreen({ navigation }) {
 
   const flyToPantry = (pantry) => {
     if (!pantry) return;
-    const lat = parseFloat(pantry.latitude); 
+    const lat = parseFloat(pantry.latitude);
     const lng = parseFloat(pantry.longitude);
     if (
       mapRef.current &&
@@ -96,6 +102,22 @@ export default function MapScreen({ navigation }) {
           showsUserLocation={true}
           showsMyLocationButton={true}
         >
+          {/* Bitmoji marker at fixed location */}
+          <Marker
+            coordinate={{
+              latitude: 34.0190324,
+              longitude: -118.4552004
+            }}
+            anchor={{ x: 0.5, y: 0.5 }}
+          >
+            <Image
+              source={isPartyMode ? bitmojiParty : bitmojiDefault}
+              style={{ width: 160, height: 120 }}
+              resizeMode="contain"
+            />
+          </Marker>
+
+
           {visible && location && showMarkers &&
             entries.map((entry) => {
               const lat = parseFloat(entry.latitude);
@@ -108,7 +130,6 @@ export default function MapScreen({ navigation }) {
                   title={entry.title}
                   description={entry.description}
                   onPress={() => handleMarkerPress(entry)}
-                  pinColor={selectedPantry?.id === entry.id ? "blue" : "red"}
                 />
               );
             })}
@@ -123,6 +144,7 @@ export default function MapScreen({ navigation }) {
             onPress={() => {
               setVisible(true);
               setShowMarkers(true);
+              setIsPartyMode((prev) => !prev); // toggle party mode image
             }}
           />
           <BottomDrawer
