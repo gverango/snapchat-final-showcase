@@ -14,7 +14,9 @@ import { colors } from "../../assets/themes/colors";
 export default function PartyButton({ onPress }) {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.text}>🎉</Text>
+      <Image style={styles.image}
+        source={require("../../assets/shelfHelpIcon.jpg")}
+        />
     </TouchableOpacity>
   );
 }
@@ -39,7 +41,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4
 },
-  text: {
-    fontSize: 28,
+  image: {
+    width: 50, 
+    height: 50, 
+    borderRadius:25,
+    position: "absolute", 
+    top: 5, 
+    left: 5 
   },
 });
