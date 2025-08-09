@@ -42,7 +42,7 @@ export default function AiButton({ image_url }) {
       room: "global_room",
     });
 
-    await deleteFirstRow();
+    // await deleteFirstRow();
 
     navigation.navigate("GroupChat", { initialMessage: "AI Reply sent" });
   };

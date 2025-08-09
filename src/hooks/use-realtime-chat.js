@@ -25,18 +25,21 @@ export function useRealtimeChat({ roomName, username }) {
   }, [roomName]);
 
   useEffect(() => {
-    const channel = supabase.channel(`room-${roomName}`).on(
-      "postgres_changes",
-      {
-        event: "INSERT",
-        schema: "public",
-        table: MESSAGES_TABLE,
-        filter: `room=eq.${roomName}`,
-      },
-      (payload) => {
-        setMessages((current) => [...current, payload.new]);
-      }
-    );
+    const channel = supabase
+      .channel(`room-${roomName}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: MESSAGES_TABLE,
+          filter: `room=eq.${roomName}`,
+        },
+        (payload) => {
+          setMessages((current) => [...current, payload.new]);
+        }
+      )
+      .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
@@ -66,21 +69,22 @@ export function useRealtimeChat({ roomName, username }) {
   };
 
   const sendMessage = useCallback(async (content, user) => {
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        content,
-        user_email: user,
-        room: "global_room",
-        created_at: new Date().toISOString(),
-      },
-    ]);
+    const message = {
+      content,
+      user_email: user,
+      room: "global_room",
+      created_at: new Date().toISOString(),
+    };
 
-    await deleteFirstRow();
+    const { data, error } = await supabase
+      .from("messages")
+      .insert([message])
+      .select();
 
     if (error) {
-      console.error("Send message error:", error);
+      console.error("Error inserting message:", error);
+    } else {
+      deleteFirstRow();
     }
   }, []);
 

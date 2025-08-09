@@ -118,8 +118,6 @@ export default function GroupChatScreen({ route, navigation }) {
         onContentSizeChange={scrollToBottom}
       />
 
-      <ScreenButton image_url="https://httkhtqkarrfmxpssjph.supabase.co/storage/v1/object/public/snaps/food.jpeg" />
-
       <View style={styles.inputContainer}>
         <TextInput
           value={input}
