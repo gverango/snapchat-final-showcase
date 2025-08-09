@@ -5,20 +5,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  Button,
-  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-// import Ionicons from "react-native-vector-icons/Ionicons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { supabase } from "../utils/hooks/supabase"; // Import Supabase client
-
 import Header from "../components/Header";
 import { CHATBOTS } from "./ConversationScreen";
-
-import AiButton from "../components/AiButton";
-import ScreenButton from "../components/ScreenButton";
 
 export default function ChatScreen({ navigation }) {
   const [chats, setChats] = useState([]);
@@ -69,11 +61,7 @@ export default function ChatScreen({ navigation }) {
           />
           <Text style={[styles.userName, { color: "black" }]}>myAI Chat</Text>
         </TouchableOpacity>
-
-        <ScreenButton image_url="https://httkhtqkarrfmxpssjph.supabase.co/storage/v1/object/public/snaps/food.jpeg" />
       </View>
-
-      {/* <AiButton image_url="https://httkhtqkarrfmxpssjph.supabase.co/storage/v1/object/public/snaps/fire.png" /> */}
     </View>
   );
 }

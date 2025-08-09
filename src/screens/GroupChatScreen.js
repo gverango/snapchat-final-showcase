@@ -13,8 +13,6 @@ import { useAuthentication } from "../utils/hooks/useAuthentication";
 import { useRealtimeChat } from "../hooks/use-realtime-chat";
 import { useChatScroll } from "../hooks/use-chat-scroll";
 import { getChat } from "../../getChatGPT";
-import { getImageChat } from "../../getImageChatGPT";
-import ScreenButton from "../components/ScreenButton";
 
 export default function GroupChatScreen({ route, navigation }) {
   const { user } = useAuthentication();
