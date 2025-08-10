@@ -157,7 +157,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         overflow: 'hidden',
-        backgroundColor: '#fff',
+        backgroundColor: '#FAFAFA',
+        borderWidth: 2,
+        borderColor: '#EDEEEF',
     },
     snapImage:{
         width: '100%',

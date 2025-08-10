@@ -25,19 +25,17 @@ const fetchPantries = async (setEntries) => {
 
 export default function MapScreen({ navigation }) {
   // --- State ---
-  const [visible, setVisible] = useState(false);
+  const [partyMode, setPartyMode] = useState(false);
   const [entries, setEntries] = useState([]);
-  const [showMarkers, setShowMarkers] = useState(false);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [currentRegion, setCurrentRegion] = useState(null);
   const [selectedPantry, setSelectedPantry] = useState(null);
-  const [isPartyMode, setIsPartyMode] = useState(false);
 
   const mapRef = useRef(null);
 
-const bitmojiDefault = require("../../assets/sad phone.png");
-const bitmojiParty = require("../../assets/Dazzled.png");
+  const bitmojiDefault = require("../../assets/sad phone.png");
+  const bitmojiParty = require("../../assets/Dazzled.png");
 
   // --- Effects ---
   useEffect(() => {
@@ -64,7 +62,7 @@ const bitmojiParty = require("../../assets/Dazzled.png");
 
   // --- Handlers ---
   const handleMarkerPress = (entry) => {
-    setVisible(true);
+    setPartyMode(true);
     setSelectedPantry(entry);
   };
 
@@ -111,14 +109,14 @@ const bitmojiParty = require("../../assets/Dazzled.png");
             anchor={{ x: 0.5, y: 0.5 }}
           >
             <Image
-              source={isPartyMode ? bitmojiParty : bitmojiDefault}
+              source={partyMode ? bitmojiParty : bitmojiDefault}
               style={{ width: 160, height: 120 }}
               resizeMode="contain"
             />
           </Marker>
 
 
-          {visible && location && showMarkers &&
+          {partyMode && location &&
             entries.map((entry) => {
               const lat = parseFloat(entry.latitude);
               const lng = parseFloat(entry.longitude);
@@ -142,21 +140,21 @@ const bitmojiParty = require("../../assets/Dazzled.png");
         <View style={styles.locationContainer}>
           <PartyButton
             onPress={() => {
-              setVisible(true);
-              setShowMarkers(true);
-              setIsPartyMode((prev) => !prev); // toggle party mode image
+              setPartyMode(prev => !prev);
             }}
           />
+
           <BottomDrawer
             entries={entries}
-            isVisible={visible}
-            onClose={() => setVisible(false)}
+            isVisible={partyMode}
+            onClose={() => setPartyMode(false)}
             selectedPantry={selectedPantry}
             setSelectedPantry={(pantry) => {
               setSelectedPantry(pantry);
               flyToPantry(pantry);
             }}
           />
+
         </View>
       </View>
     </View>
