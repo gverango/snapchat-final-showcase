@@ -79,8 +79,8 @@ export default function MapScreen({ navigation }) {
         {
           latitude: lat,
           longitude: lng,
-          latitudeDelta: 0.045,
-          longitudeDelta: 0.045,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
         },
         500
       );
@@ -151,6 +151,7 @@ export default function MapScreen({ navigation }) {
             selectedPantry={selectedPantry}
             setSelectedPantry={(pantry) => {
               setSelectedPantry(pantry);
+              setPartyMode(true);
               flyToPantry(pantry);
             }}
           />

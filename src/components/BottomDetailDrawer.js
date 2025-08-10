@@ -27,7 +27,7 @@ export default function BottomDetailDrawer({
     if (isVisible) {
       Animated.parallel([
         Animated.timing(translateY, {
-          toValue: height * 0.04,
+          toValue: height * 0.15,
           duration: 300,
           useNativeDriver: true,
         }),
