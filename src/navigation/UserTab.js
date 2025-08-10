@@ -67,12 +67,16 @@ export default function UserStack({ route, navigation }) {
         name="Chat"
         component={ChatScreen}
         options={{ ...screenOptions, headerShown: false }}
-      />
-      <Tab.Screen
-        name="Camera"
-        component={CameraScreen}
-        options={{ ...screenOptions, headerShown: false }}
-      />
+      /><Tab.Screen
+  name="Camera"
+  component={CameraScreen}
+  options={{
+    ...screenOptions,
+    headerShown: false,
+    tabBarStyle: { backgroundColor: 'transparent' },
+  }}
+/>
+
       <Tab.Screen
         name="Stories"
         component={StoriesScreen}
