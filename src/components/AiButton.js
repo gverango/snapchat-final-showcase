@@ -1,5 +1,13 @@
-import React from "react";
-import { View, TouchableOpacity, Image, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Modal,
+  Text,
+  Button,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { supabase } from "../utils/hooks/supabase";
 import { getImageChat } from "../../getImageChatGPT";
@@ -8,6 +16,7 @@ const MESSAGES_TABLE = "messages";
 
 export default function AiButton({ image_url }) {
   const navigation = useNavigation();
+  const [modalVisible, setModalVisible] = useState(false);
 
   const deleteFirstRow = async () => {
     const { data, error: fetchError } = await supabase
@@ -15,6 +24,11 @@ export default function AiButton({ image_url }) {
       .select("*")
       .order("id", { ascending: true })
       .limit(1);
+
+    if (fetchError || !data?.length) {
+      console.error("Error fetching first row:", fetchError);
+      return;
+    }
 
     const { error: deleteError } = await supabase
       .from(MESSAGES_TABLE)
@@ -27,35 +41,69 @@ export default function AiButton({ image_url }) {
   };
 
   const pressedButton = async () => {
+    setModalVisible(false);
+
     const prompt =
       "Create a very simple short and clear recipe for the image you see.";
-    const test = image_url;
-
-    const response = await getImageChat({ prompt, imageUrl: test });
+    const response = await getImageChat({ prompt, imageUrl: image_url });
     const aiReply = response?.choices?.[0]?.message?.content;
-
-    // console.log("AI RESPONDED:", aiReply);
 
     await supabase.from(MESSAGES_TABLE).insert({
       content: aiReply,
-      user_email: "myAI@ai.chatroom",
+      user_email: "My AI@ai.chatroom",
       room: "global_room",
     });
 
-    // await deleteFirstRow();
+    await deleteFirstRow();
 
-    navigation.navigate("GroupChat", { initialMessage: "AI Reply sent" });
+    navigation.navigate("My AI", { initialMessage: "AI Reply sent" });
   };
 
   return (
     <View>
-      <TouchableOpacity onPress={pressedButton} style={styles.button}>
+      <TouchableOpacity
+        onPress={() => setModalVisible(true)}
+        style={styles.button}
+      >
         <Image
           source={require("../../assets/carrotIcon.png")}
           style={styles.image}
           resizeMode="cover"
         />
       </TouchableOpacity>
+
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContainer}>
+            <Image
+              source={require("../../assets/ChefAI.png")}
+              style={styles.bellaImage}
+            />
+            <Text style={styles.modalText}>
+              Want me to analyze this picture and generate a recipe with
+              ingredients?
+            </Text>
+
+            <TouchableOpacity
+              style={[styles.buttonPrimary, { backgroundColor: "#10adff" }]}
+              onPress={pressedButton}
+            >
+              <Text style={styles.buttonText}>Analyze Food</Text>
+            </TouchableOpacity>
+
+            <Button
+              title="Cancel"
+              color="red"
+              onPress={() => setModalVisible(false)}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -66,5 +114,43 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 40,
     overflow: "hidden",
+  },
+  bellaImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    overflow: "hidden",
+    alignSelf: "center",
+    marginBottom: 10,
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    width: 300,
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  buttonPrimary: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 10,
   },
 });

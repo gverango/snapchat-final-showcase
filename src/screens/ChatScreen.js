@@ -5,20 +5,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  Button,
-  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-// import Ionicons from "react-native-vector-icons/Ionicons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { supabase } from "../utils/hooks/supabase"; // Import Supabase client
-
 import Header from "../components/Header";
 import { CHATBOTS } from "./ConversationScreen";
-
-import AiButton from "../components/AiButton";
-import ScreenButton from "../components/ScreenButton";
 
 export default function ChatScreen({ navigation }) {
   const [chats, setChats] = useState([]);
@@ -58,22 +50,24 @@ export default function ChatScreen({ navigation }) {
       <View>
         <TouchableOpacity
           style={[styles.userButton, {}]}
-          onPress={() => navigation.navigate("GroupChat")}
+          onPress={() => navigation.navigate("My AI")}
           key="group-chat"
         >
-          <Ionicons
+          {/* <Ionicons
             style={styles.userIcon}
             name="people-outline"
             size={36}
             color="lightgrey"
+          /> */}
+
+          <Image
+            source={require("../../assets/ChefAI.png")}
+            style={styles.userIcon}
           />
-          <Text style={[styles.userName, { color: "black" }]}>myAI Chat</Text>
+
+          <Text style={[styles.userName, { color: "black" }]}>My AI</Text>
         </TouchableOpacity>
-
-        <ScreenButton image_url="https://httkhtqkarrfmxpssjph.supabase.co/storage/v1/object/public/snaps/food.jpeg" />
       </View>
-
-      {/* <AiButton image_url="https://httkhtqkarrfmxpssjph.supabase.co/storage/v1/object/public/snaps/fire.png" /> */}
     </View>
   );
 }
@@ -90,10 +84,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   userIcon: {
-    position: "absolute",
-    left: 5,
-    top: 5,
-  },
+  position: "absolute",
+  left: 5,
+  top: 7,
+  width: 36,
+  height: 36,
+  resizeMode: "contain",
+},
+
   userName: {
     position: "absolute",
     left: 50,
