@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://github.com/gverango/snapchat-final-showcase">
-    <img src="./assets/White Food Ghost.png" alt="Logo" width="180" height="80">
+    <img src="./assets/White Food Ghost.png" alt="Logo" width="180" height="180">
   </a>
 </div>
 
