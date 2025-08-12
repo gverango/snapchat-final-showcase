@@ -119,9 +119,8 @@ async function uploadSnap() {
                 {snaps.map((media) => (
                     <TouchableOpacity key={media.name} onPress={() => openSnap(media.url)}>
                         <View style={styles.snap}>
-                            <Image
+                            <Image style={styles.snapImage}
                                 source={{ uri: media.url }}
-                                style={{ width: 60, height: 90, borderRadius: 10 }}
                             />
                         </View>
                     </TouchableOpacity>
@@ -147,17 +146,24 @@ const styles = StyleSheet.create({
     snapsContainer: {
         flexDirection: "row",
         padding: 10,
-        backgroundColor: "#dcdcdc",
+        backgroundColor: "#ffffffff",
         gap: 10,
         marginTop: 10,
     },
     snap: {
-        width: 60,
-        height: 90,
+        width: 120,
+        height: 180,
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
         overflow: 'hidden',
-        backgroundColor: '#fff',
+        backgroundColor: '#FAFAFA',
+        borderWidth: 2,
+        borderColor: '#EDEEEF',
     },
+    snapImage:{
+        width: '100%',
+        height: '100%',
+        borderRadius: 10,
+    }
 });
