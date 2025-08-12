@@ -50,16 +50,22 @@ export default function ChatScreen({ navigation }) {
       <View>
         <TouchableOpacity
           style={[styles.userButton, {}]}
-          onPress={() => navigation.navigate("GroupChat")}
+          onPress={() => navigation.navigate("My AI")}
           key="group-chat"
         >
-          <Ionicons
+          {/* <Ionicons
             style={styles.userIcon}
             name="people-outline"
             size={36}
             color="lightgrey"
+          /> */}
+
+          <Image
+            source={require("../../assets/carrotIcon.png")}
+            style={styles.userIcon}
           />
-          <Text style={[styles.userName, { color: "black" }]}>myAI Chat</Text>
+
+          <Text style={[styles.userName, { color: "black" }]}>My AI</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -78,10 +84,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   userIcon: {
-    position: "absolute",
-    left: 5,
-    top: 5,
-  },
+  position: "absolute",
+  left: 5,
+  top: 7,
+  width: 36,
+  height: 36,
+  resizeMode: "contain",
+},
+
   userName: {
     position: "absolute",
     left: 50,
