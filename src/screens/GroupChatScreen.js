@@ -15,7 +15,6 @@ import { useChatScroll } from "../hooks/use-chat-scroll";
 import { getChat } from "../../getChatGPT";
 import { ImageBackground } from "react-native";
 
-
 export default function GroupChatScreen({ route, navigation }) {
   const { user } = useAuthentication();
   const username = user?.email || "My AI";
@@ -89,107 +88,101 @@ export default function GroupChatScreen({ route, navigation }) {
   }, [messages, scrollToBottom]);
 
   return (
-  <ImageBackground
-    source={require("../../assets/myAiBackground.jpg")}
-    style={styles.container}
-    resizeMode="cover"
-  >
-
-    <View
-      style={styles.chatWrapper}
+    <ImageBackground
+      source={require("../../assets/myAiBackground.jpg")}
+      style={styles.container}
+      resizeMode="cover"
     >
-      <FlatList
-        ref={containerRef}
-        data={messages}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => {
-          const messageUser =
-            item.user?.name?.split("@")[0] ||
-            item.user_email?.split("@")[0] ||
-            "Unknown";
-          const isSender = messageUser === username.split("@")[0];
+      <View style={styles.chatWrapper}>
+        <FlatList
+          ref={containerRef}
+          data={messages}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
+            const messageUser =
+              item.user?.name?.split("@")[0] ||
+              item.user_email?.split("@")[0] ||
+              "Unknown";
+            const isSender = messageUser === username.split("@")[0];
 
-          return (
-            <Text style={styles.message}>
-              <Text
-                style={[
-                  styles.username,
-                  isSender ? styles.senderText : styles.otherText,
-                ]}
-              >
-                {messageUser[0].toUpperCase() +
-                  messageUser.substring(1, messageUser.length)}{" "}
+            return (
+              <Text style={styles.message}>
+                <Text
+                  style={[
+                    styles.username,
+                    isSender ? styles.senderText : styles.otherText,
+                  ]}
+                >
+                  {messageUser[0].toUpperCase() +
+                    messageUser.substring(1, messageUser.length)}{" "}
+                </Text>
+                {"\n"}
+                <Text style={styles.message}>{item.content}</Text>
               </Text>
-              {"\n"}
-              <Text style={styles.message}>{item.content}</Text>
-            </Text>
-          );
-        }}
-        onContentSizeChange={scrollToBottom}
-      />
-    </View>
+            );
+          }}
+          onContentSizeChange={scrollToBottom}
+        />
+      </View>
 
-    <View style={styles.inputContainer}>
-      <TextInput
-        value={input}
-        onChangeText={setInput}
-        placeholder="Type a message..."
-        style={styles.input}
-      />
-      <Button title="Send" onPress={handleSend} />
-    </View>
-  </ImageBackground>
-  
-);
-
+      <View style={styles.inputContainer}>
+        <TextInput
+          value={input}
+          onChangeText={setInput}
+          placeholder="Type a message..."
+          style={styles.input}
+        />
+        <Button title="Send" onPress={handleSend} />
+      </View>
+    </ImageBackground>
+  );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
+  container: {
+    flex: 1,
   },
   chatWrapper: {
     flex: 1,
     padding: 20,
   },
-  header: { 
-    fontSize: 20, 
-    fontWeight: "bold", 
-    marginBottom: 8 
+  header: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 8,
   },
   message: {
     paddingVertical: 8,
     paddingHorizontal: 12,
     fontSize: 16,
-    backgroundColor: "white",      
-    borderRadius: 8,               
+    backgroundColor: "white",
+    borderRadius: 8,
     marginVertical: 4,
     fontFamily: Platform.select({
-    ios: "AvenirNext-Regular",
-    android: "sans-serif-medium",
-
-  }),
-  fontWeight: Platform.select({
-    ios: "600",
-    android: "700", // android needs a heavier weight for more thickness
-  }),
+      ios: "AvenirNext-Regular",
+      android: "sans-serif-medium",
+    }),
+    fontWeight: Platform.select({
+      ios: "600",
+      android: "700",
+    }),
   },
-  username: { 
-    fontWeight: "bold", 
+  username: {
+    fontWeight: "bold",
   },
   inputContainer: {
-  flexDirection: "row",
-  alignItems: "center",
-  backgroundColor: "rgba(255,255,255,0.9)",
-  paddingHorizontal: 10,
-  paddingVertical: 8,
-  borderTopLeftRadius: 12,
-  borderTopRightRadius: 12,
-  width: "100%",
-  paddingBottom: 20,
-  paddingLeft: 20,
-  paddingRight: 20,
-},
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.9)",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    width: "100%",
+    paddingBottom: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
   input: {
     flex: 1,
     borderWidth: 1,
