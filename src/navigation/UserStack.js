@@ -72,7 +72,7 @@ export default function App() {
           options={{ headerShown: true }}
         />
         <Stack.Screen
-          name="GroupChat"
+          name="My AI"
           component={GroupChatScreen}
           options={{ headerShown: true }}
          />
