@@ -1,8 +1,8 @@
-import { API_KEY } from "@env";
+import { OPENAI_API_KEY } from "@env";
 
 var myHeaders = new Headers();
 myHeaders.append("Content-Type", "application/json");
-myHeaders.append("Authorization", "Bearer " + API_KEY);
+myHeaders.append("Authorization", "Bearer " + OPENAI_API_KEY);
 
 export const getImageChat = async ({ prompt, imageUrl }) => {
   const messages = [

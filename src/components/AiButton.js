@@ -81,7 +81,7 @@ export default function AiButton({ image_url }) {
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
             <Image
-              source={require("../../assets/carrotIcon.png")}
+              source={require("../../assets/ChefAI.png")}
               style={styles.bellaImage}
             />
             <Text style={styles.modalText}>
@@ -116,8 +116,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   bellaImage: {
-    width: 40,
-    height: 40,
+    width: 80,
+    height: 80,
     borderRadius: 40,
     overflow: "hidden",
     alignSelf: "center",

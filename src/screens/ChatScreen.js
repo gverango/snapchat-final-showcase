@@ -61,7 +61,7 @@ export default function ChatScreen({ navigation }) {
           /> */}
 
           <Image
-            source={require("../../assets/carrotIcon.png")}
+            source={require("../../assets/ChefAI.png")}
             style={styles.userIcon}
           />
 
