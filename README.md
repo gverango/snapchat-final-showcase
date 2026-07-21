@@ -15,20 +15,17 @@ It aims to help people who struggle with food insecurity find local food resourc
 [![Supabase][Supabase]][Supabase-url]
 [![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)]([https://openai.com/](https://openai.com/api/))
 
-
 ## Check it Out
 
 ### Quick Demo
+[![Watch the video](https://img.youtube.com/vi/XlpSna8y7M8/0.jpg)](https://youtube.com/shorts/XlpSna8y7M8?feature=share)
 
-[insert this later]
+### Slides
+[![Slides](https://img.shields.io/badge/Slides-Google%20Slides-orange?style=for-the-badge&logo=google&logoColor=white)](https://docs.google.com/presentation/d/1Il744ojjrL0LWfiA48tAJxAxBQwjY0GCLot8DuQJiJc/edit?usp=sharing)
 
-### Link to Slides
+### FigJam
+[![Figma](https://img.shields.io/badge/Figma-FF7262?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/board/XXPGhIz2iyU0lOEC51dEwI/Snap-Academies-Showcase-%F0%9F%91%BB?node-id=3363-8411&t=ZJ71y7JCW5cnfKdd-1)
 
-[insert this later]
-
-### Link to Figjam
-
-https://www.figma.com/board/XXPGhIz2iyU0lOEC51dEwI/Snap-Academies-Showcase-%F0%9F%91%BB?node-id=3363-8411&t=ZJ71y7JCW5cnfKdd-1
 
 ## Getting Started
 
